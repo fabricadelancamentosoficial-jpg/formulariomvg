@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alistamento — Missão ViralGET</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0D0D0D; min-height: 100vh; padding: 24px 16px; color: #fff; }
+  .container { max-width: 680px; margin: 0 auto; }
+
+  :root {
+    --g: #5d6532;
+    --g2: #4a5128;
+    --g3: #3a4020;
+    --gl: rgba(93,101,50,0.18);
+    --gb: rgba(93,101,50,0.35);
+    --text: rgba(255,255,255,0.75);
+    --muted: rgba(255,255,255,0.4);
+    --muted2: rgba(255,255,255,0.2);
+    --border: rgba(255,255,255,0.07);
+    --card: rgba(255,255,255,0.04);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #1a1c0d 0%, #2a2e12 50%, #3a4018 100%);
+    border-radius: 16px; padding: 40px 32px; text-align: center;
+    margin-bottom: 28px; border: 1px solid rgba(93,101,50,0.35);
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: 'MVG'; position: absolute; font-size: 180px; font-weight: 900;
+    color: rgba(93,101,50,0.06); bottom: -30px; right: -10px;
+    letter-spacing: 0.05em; line-height: 1; pointer-events: none;
+  }
+  .header-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(93,101,50,0.9); margin-bottom: 10px; }
+  .header h1 { font-size: 30px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -0.5px; line-height: 1.1; }
+  .header h1 span { color: #8a9642; }
+  .header .slogan { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; margin-bottom: 6px; font-style: italic; }
+  .header .chamado { font-size: 12px; color: rgba(93,101,50,0.85); line-height: 1.7; font-style: italic; margin-top: 10px; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); transition: color .3s; }
+  .progress-label.active { color: rgba(138,150,66,0.9); }
+  .progress-label.done { color: rgba(93,101,50,0.7); }
+  .progress-bar-wrap { height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+  .progress-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--g3), #8a9642); transition: width .4s ease; }
+
+  /* ── STEPS ── */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .sec-header { margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid rgba(93,101,50,0.3); }
+  .sec-num { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(93,101,50,0.8); margin-bottom: 4px; }
+  .sec-title { font-size: 20px; font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 4px; }
+  .sec-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── FORM FIELDS ── */
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); margin-bottom: 8px; line-height: 1.5; }
+  .field label .obrig { color: rgba(93,101,50,0.9); margin-left: 3px; font-size: 12px; }
+  .field label .context { display: block; font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 3px; line-height: 1.5; }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 13px 16px;
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color .2s, background .2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="email"]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: rgba(93,101,50,0.7);
+    background: rgba(93,101,50,0.08);
+  }
+  textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+  select option { background: #1a1a1a; color: #fff; }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+
+  /* ── RADIO / CHECK ── */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .options.horizontal { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .opt {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px; padding: 12px 16px;
+    cursor: pointer; transition: all .2s;
+    font-size: 13px; color: var(--text);
+    user-select: none;
+  }
+  .opt:hover { border-color: rgba(93,101,50,0.4); background: rgba(93,101,50,0.07); }
+  .opt.selected { border-color: rgba(93,101,50,0.6); background: rgba(93,101,50,0.15); color: #fff; }
+  .opt-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+    transition: all .2s; position: relative;
+  }
+  .opt.selected .opt-dot {
+    border-color: #8a9642; background: #5d6532;
+  }
+  .opt-dot::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%) scale(0);
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #fff; transition: transform .2s;
+  }
+  .opt.selected .opt-dot::after { transform: translate(-50%,-50%) scale(1); }
+  .opt-sq {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+    transition: all .2s; display: flex; align-items: center; justify-content: center;
+  }
+  .opt.selected .opt-sq {
+    border-color: #8a9642; background: #5d6532;
+  }
+  .opt-sq::after { content: '✓'; font-size: 10px; color: #fff; opacity: 0; transition: opacity .15s; }
+  .opt.selected .opt-sq::after { opacity: 1; }
+
+  /* ── SCALE FIELD ── */
+  .scale-wrap { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
+  .scale-opt {
+    text-align: center; background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07); border-radius: 8px;
+    padding: 10px 4px; cursor: pointer; transition: all .2s;
+    font-size: 14px; font-weight: 700; color: var(--muted);
+  }
+  .scale-opt:hover { border-color: rgba(93,101,50,0.4); color: #fff; }
+  .scale-opt.selected { border-color: rgba(93,101,50,0.7); background: rgba(93,101,50,0.18); color: #fff; }
+  .scale-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+  .scale-lbl { font-size: 10px; color: var(--muted); }
+
+  /* ── DIVIDER ── */
+  .fdiv { border: none; border-top: 1px solid rgba(255,255,255,0.05); margin: 24px 0; }
+
+  /* ── ALERT ── */
+  .alert-g {
+    background: var(--gl); border: 1px solid rgba(93,101,50,0.3);
+    border-left: 3px solid var(--g); border-radius: 10px;
+    padding: 14px 18px; margin-bottom: 20px;
+  }
+  .alert-g p { font-size: 13px; color: var(--text); line-height: 1.65; }
+  .alert-g p strong { color: #fff; }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 28px; }
+  .btn-next {
+    flex: 1; padding: 15px; border-radius: 10px;
+    background: linear-gradient(135deg, #4a5128, #5d6532);
+    border: none; color: #fff; font-size: 14px; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.04em; transition: opacity .2s;
+    font-family: inherit;
+  }
+  .btn-next:hover { opacity: 0.88; }
+  .btn-back {
+    padding: 15px 22px; border-radius: 10px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+  /* ── RESULTADO ── */
+  .resultado { display: none; }
+  .resultado.active { display: block; }
+  .result-header {
+    background: linear-gradient(135deg, #1a1c0d 0%, #2a2e12 50%, #3a4018 100%);
+    border-radius: 16px; padding: 36px 28px; text-align: center;
+    margin-bottom: 22px; border: 1px solid rgba(93,101,50,0.35);
+  }
+  .result-icon { font-size: 40px; margin-bottom: 12px; }
+  .result-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .result-title span { color: #8a9642; }
+  .result-sub { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  .result-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 20px 22px; margin-bottom: 12px;
+  }
+  .result-card-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(93,101,50,0.8); margin-bottom: 12px; }
+  .result-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .result-row:last-child { border-bottom: none; }
+  .result-q { font-size: 12px; color: var(--muted); flex: 0 0 40%; line-height: 1.5; }
+  .result-a { font-size: 13px; color: #fff; flex: 1; line-height: 1.55; word-break: break-word; }
+
+  .copy-btn {
+    width: 100%; padding: 14px; border-radius: 10px; margin-top: 6px;
+    background: rgba(93,101,50,0.2); border: 1px solid rgba(93,101,50,0.4);
+    color: rgba(138,150,66,0.9); font-size: 13px; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.04em; transition: all .2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { background: rgba(93,101,50,0.32); }
+  .copy-btn.copied { background: rgba(93,101,50,0.35); color: #fff; }
+
+  .novo-btn {
+    width: 100%; padding: 14px; border-radius: 10px; margin-top: 10px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .novo-btn:hover { background: rgba(255,255,255,0.07); color: #fff; }
+
+  .step-anim { animation: fadeUp .3s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── REQUIRED ERROR ── */
+  .field-error { font-size: 11px; color: #c0392b; margin-top: 5px; display: none; }
+  .field.has-error input, .field.has-error textarea, .field.has-error select {
+    border-color: rgba(192,57,43,0.5);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">Get Church Floripa</div>
+    <h1>Missão <span>ViralGET</span></h1>
+    <div class="slogan">O campo é digital. A missão é eterna.</div>
+    <div class="chamado">O front digital precisa de você. Aliste-se à Missão ViralGET<br>e transforme cada clip em uma alma alcançada.</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-labels">
+      <span class="progress-label active" id="lbl0">Identificação</span>
+      <span class="progress-label" id="lbl1">Fé & Chamado</span>
+      <span class="progress-label" id="lbl2">O Digital</span>
+      <span class="progress-label" id="lbl3">Por que eu</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width:12.5%"></div>
+    </div>
+  </div>
+
+  <!-- ════════════ STEP 0 — IDENTIFICAÇÃO ════════════ -->
+  <div class="step active step-anim" id="step0">
+    <div class="sec-header">
+      <div class="sec-num">Etapa 01 de 04</div>
+      <div class="sec-title">Identificação</div>
+      <div class="sec-sub">Informações básicas sobre você antes de começarmos.</div>
+    </div>
+
+    <div class="field" id="f-nome">
+      <label>Nome completo <span class="obrig">*</span></label>
+      <input type="text" id="nome" placeholder="Seu nome completo">
+      <div class="field-error">Por favor, preencha seu nome.</div>
+    </div>
+
+    <div class="field" id="f-idade">
+      <label>Idade <span class="obrig">*</span></label>
+      <input type="number" id="idade" placeholder="Ex: 19" min="12" max="40">
+      <div class="field-error">Por favor, informe sua idade.</div>
+    </div>
+
+    <div class="field" id="f-instagram">
+      <label>@ do Instagram <span class="obrig">*</span>
+        <span class="context">Seu perfil pessoal.</span>
+      </label>
+      <input type="text" id="instagram" placeholder="@seuperfil">
+      <div class="field-error">Por favor, informe seu Instagram.</div>
+    </div>
+
+    <div class="field">
+      <label>Há quanto tempo você frequenta a Get?</label>
+      <div class="options" id="tempo-get">
+        <div class="opt" onclick="selectOpt(this,'tempo-get','radio')"><span class="opt-dot"></span> Menos de 6 meses</div>
+        <div class="opt" onclick="selectOpt(this,'tempo-get','radio')"><span class="opt-dot"></span> 6 meses a 1 ano</div>
+        <div class="opt" onclick="selectOpt(this,'tempo-get','radio')"><span class="opt-dot"></span> 1 a 2 anos</div>
+        <div class="opt" onclick="selectOpt(this,'tempo-get','radio')"><span class="opt-dot"></span> Mais de 2 anos</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-next" onclick="nextStep(0)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ════════════ STEP 1 — FÉ & CHAMADO ════════════ -->
+  <div class="step" id="step1">
+    <div class="sec-header">
+      <div class="sec-num">Etapa 02 de 04</div>
+      <div class="sec-title">Fé & Chamado</div>
+      <div class="sec-sub">Queremos entender sua caminhada com Deus e o que move o seu coração.</div>
+    </div>
+
+    <div class="field" id="f-fe1">
+      <label>Como você descreveria sua relação com Jesus hoje? <span class="obrig">*</span>
+        <span class="context">Seja honesto. Não existe resposta certa ou errada.</span>
+      </label>
+      <textarea id="fe1" placeholder="Conte com suas próprias palavras..."></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field" id="f-fe2">
+      <label>Houve algum momento em que você sentiu que Deus falou com você de forma específica? <span class="obrig">*</span>
+        <span class="context">Pode ser um culto, uma pregação, um momento de oração ou um versículo.</span>
+      </label>
+      <textarea id="fe2" placeholder="Descreva esse momento..."></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field">
+      <label>Qual dessas frases mais descreve onde você está hoje na fé?</label>
+      <div class="options" id="estado-fe">
+        <div class="opt" onclick="selectOpt(this,'estado-fe','radio')"><span class="opt-dot"></span> Estou crescendo muito e com fome de mais</div>
+        <div class="opt" onclick="selectOpt(this,'estado-fe','radio')"><span class="opt-dot"></span> Tenho uma fé sólida e quero colocá-la em prática</div>
+        <div class="opt" onclick="selectOpt(this,'estado-fe','radio')"><span class="opt-dot"></span> Ainda estou descobrindo quem Jesus é para mim</div>
+        <div class="opt" onclick="selectOpt(this,'estado-fe','radio')"><span class="opt-dot"></span> Já passei por altos e baixos, mas quero servir</div>
+      </div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field" id="f-servir">
+      <label>O que é servir a Deus para você? <span class="obrig">*</span>
+        <span class="context">Em suas próprias palavras — o que significa colocar sua vida a serviço de algo maior?</span>
+      </label>
+      <textarea id="servir" placeholder="O que servir a Deus representa para você..."></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field" id="f-fe3">
+      <label>Para você, o que significa ser um missionário digital? <span class="obrig">*</span>
+        <span class="context">Em suas próprias palavras, sem pesquisar — o que esse papel representa?</span>
+      </label>
+      <textarea id="fe3" placeholder="O que significa para você..."></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="alert-g">
+      <p><strong>"O campo é digital. A missão é eterna."</strong><br>A Missão ViralGET não é um projeto de marketing — é um chamado apostólico. Você está prestes a se tornar um braço da mensagem da Get no campo mais vasto do século.</p>
+    </div>
+
+    <div class="field">
+      <label>Você já serviu ou serve em algum ministério da Get?</label>
+      <div class="options" id="serve">
+        <div class="opt" onclick="selectOpt(this,'serve','radio')"><span class="opt-dot"></span> Sim, atualmente sirvo em um ministério</div>
+        <div class="opt" onclick="selectOpt(this,'serve','radio')"><span class="opt-dot"></span> Já servi, mas não estou mais</div>
+        <div class="opt" onclick="selectOpt(this,'serve','radio')"><span class="opt-dot"></span> Nunca servi, quero começar agora</div>
+        <div class="opt" onclick="selectOpt(this,'serve','radio')"><span class="opt-dot"></span> Ainda estou discernindo onde servir</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep(1)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(1)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ════════════ STEP 2 — O DIGITAL ════════════ -->
+  <div class="step" id="step2">
+    <div class="sec-header">
+      <div class="sec-num">Etapa 03 de 04</div>
+      <div class="sec-title">O Digital</div>
+      <div class="sec-sub">Queremos entender seu nível com redes sociais e produção de conteúdo. Não precisa ser expert — só precisa ter vontade.</div>
+    </div>
+
+    <div class="field">
+      <label>Quais redes sociais você usa com frequência? <span class="context">Pode marcar mais de uma.</span></label>
+      <div class="options horizontal" id="redes">
+        <div class="opt" onclick="selectOpt(this,'redes','check')"><span class="opt-sq"></span> Instagram</div>
+        <div class="opt" onclick="selectOpt(this,'redes','check')"><span class="opt-sq"></span> TikTok</div>
+        <div class="opt" onclick="selectOpt(this,'redes','check')"><span class="opt-sq"></span> YouTube</div>
+        <div class="opt" onclick="selectOpt(this,'redes','check')"><span class="opt-sq"></span> Facebook</div>
+        <div class="opt" onclick="selectOpt(this,'redes','check')"><span class="opt-sq"></span> X / Twitter</div>
+      </div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field">
+      <label>Você já editou algum vídeo na vida?</label>
+      <div class="options" id="editou">
+        <div class="opt" onclick="selectOpt(this,'editou','radio')"><span class="opt-dot"></span> Sim, edito com frequência (CapCut, Reels, TikTok)</div>
+        <div class="opt" onclick="selectOpt(this,'editou','radio')"><span class="opt-dot"></span> Já editei algumas vezes, mas não sou habilidoso ainda</div>
+        <div class="opt" onclick="selectOpt(this,'editou','radio')"><span class="opt-dot"></span> Nunca editei, mas quero aprender</div>
+        <div class="opt" onclick="selectOpt(this,'editou','radio')"><span class="opt-dot"></span> Já faço reels ou cortes de forma profissional</div>
+      </div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field">
+      <label>Como você se avalia em criatividade para conteúdo?
+        <span class="context">1 = Não me vejo criativo / 5 = Tenho muitas ideias e gosto de criar</span>
+      </label>
+      <div class="scale-wrap" id="criatividade">
+        <div class="scale-opt" onclick="selectScale(this,'criatividade')">1</div>
+        <div class="scale-opt" onclick="selectScale(this,'criatividade')">2</div>
+        <div class="scale-opt" onclick="selectScale(this,'criatividade')">3</div>
+        <div class="scale-opt" onclick="selectScale(this,'criatividade')">4</div>
+        <div class="scale-opt" onclick="selectScale(this,'criatividade')">5</div>
+      </div>
+      <div class="scale-labels"><span class="scale-lbl">Não me vejo criativo</span><span class="scale-lbl">Muito criativo</span></div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field">
+      <label>Quanto tempo por semana você conseguiria dedicar à Missão ViralGET?</label>
+      <div class="options" id="tempo-semana">
+        <div class="opt" onclick="selectOpt(this,'tempo-semana','radio')"><span class="opt-dot"></span> 1 a 3 horas por semana</div>
+        <div class="opt" onclick="selectOpt(this,'tempo-semana','radio')"><span class="opt-dot"></span> 4 a 7 horas por semana</div>
+        <div class="opt" onclick="selectOpt(this,'tempo-semana','radio')"><span class="opt-dot"></span> Mais de 7 horas — estou totalmente disponível</div>
+      </div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field" id="f-viral">
+      <label>Você já viu algum vídeo da Get viralizando ou alcançando muitas pessoas? <span class="obrig">*</span>
+        <span class="context">Descreva o que você viu e o que sentiu ao ver.</span>
+      </label>
+      <textarea id="viral" placeholder="O que você viu e o que sentiu..."></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep(2)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(2)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ════════════ STEP 3 — POR QUE EU ════════════ -->
+  <div class="step" id="step3">
+    <div class="sec-header">
+      <div class="sec-num">Etapa 04 de 04</div>
+      <div class="sec-title">Por que você</div>
+      <div class="sec-sub">A parte mais importante do formulário. Queremos ouvir o seu coração.</div>
+    </div>
+
+    <div class="field" id="f-pq1">
+      <label>Por que você quer ser um Missionário Digital? <span class="obrig">*</span>
+        <span class="context">Não precisa ser perfeito. Escreva o que você sente de verdade.</span>
+      </label>
+      <textarea id="pq1" placeholder="O que te move para isso..." style="min-height:120px;"></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field" id="f-pq2">
+      <label>Se você pudesse alcançar uma pessoa que nunca ouviu sobre Jesus através de um clip, o que você gostaria que ela sentisse ao assistir? <span class="obrig">*</span></label>
+      <textarea id="pq2" placeholder="O que você quer que essa pessoa sinta..." style="min-height:110px;"></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field">
+      <label>Tem alguém próximo de você que ainda não conhece Jesus?
+        <span class="context">Não precisa dar nomes. Só queremos saber se existe um rosto por trás da sua motivação.</span>
+      </label>
+      <div class="options" id="alguem">
+        <div class="opt" onclick="selectOpt(this,'alguem','radio')"><span class="opt-dot"></span> Sim — e essa pessoa é o motivo pelo qual quero fazer isso</div>
+        <div class="opt" onclick="selectOpt(this,'alguem','radio')"><span class="opt-dot"></span> Sim, tenho algumas pessoas assim no meu círculo</div>
+        <div class="opt" onclick="selectOpt(this,'alguem','radio')"><span class="opt-dot"></span> Não diretamente, mas penso em quem está além do meu alcance</div>
+      </div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field" id="f-pq3">
+      <label>O que você traria de diferente para o time? <span class="obrig">*</span>
+        <span class="context">Pode ser uma habilidade, uma perspectiva, uma experiência de vida ou algo que só você tem.</span>
+      </label>
+      <textarea id="pq3" placeholder="O que você tem que é único..."></textarea>
+      <div class="field-error">Por favor, responda esta questão.</div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field">
+      <label>Como você lida com comprometimento e consistência?</label>
+      <div class="options" id="comprometimento">
+        <div class="opt" onclick="selectOpt(this,'comprometimento','radio')"><span class="opt-dot"></span> Sou muito consistente — quando me comprometo, cumpro</div>
+        <div class="opt" onclick="selectOpt(this,'comprometimento','radio')"><span class="opt-dot"></span> Sou comprometido, mas às vezes a rotina atrapalha</div>
+        <div class="opt" onclick="selectOpt(this,'comprometimento','radio')"><span class="opt-dot"></span> Estou trabalhando para melhorar nisso</div>
+      </div>
+    </div>
+
+    <hr class="fdiv">
+
+    <div class="field">
+      <label>Alguma mensagem final para a liderança da Missão ViralGET?
+        <span class="context">Opcional. Se tiver algo no coração, pode escrever aqui.</span>
+      </label>
+      <textarea id="mensagem-final" placeholder="Opcional — mas se tiver algo no coração..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep(3)">← Voltar</button>
+      <button class="btn-next" onclick="submitForm()" style="background: linear-gradient(135deg, #3a4020, #5d6532, #7a8540);">
+        ✦ Enviar Alistamento
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════ RESULTADO ════════════ -->
+  <div class="resultado" id="resultado">
+    <div class="result-header">
+      <div class="result-icon">✦</div>
+      <div class="result-title">Alistamento <span>Recebido</span></div>
+      <div class="result-sub">A liderança da Missão ViralGET entrará em contato em breve.<br>O campo digital precisa de você.</div>
+    </div>
+
+    <div id="resultado-conteudo"></div>
+
+    <button class="copy-btn" id="copyBtn" onclick="copyResult()">Copiar respostas para análise</button>
+    <button class="novo-btn" onclick="novoAlistamento()">Novo alistamento</button>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 0;
+  const totalSteps = 4;
+
+  function updateProgress(step) {
+    const pct = ((step + 0.5) / totalSteps) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+    for (let i = 0; i < totalSteps; i++) {
+      const lbl = document.getElementById('lbl' + i);
+      lbl.className = 'progress-label';
+      if (i < step) lbl.classList.add('done');
+      else if (i === step) lbl.classList.add('active');
+    }
+  }
+
+  function selectOpt(el, groupId, type) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    if (type === 'radio') {
+      group.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    } else {
+      el.classList.toggle('selected');
+    }
+  }
+
+  function selectScale(el, groupId) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.scale-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function getOptValue(groupId, type) {
+    const group = document.getElementById(groupId);
+    if (!group) return '';
+    if (type === 'check') {
+      return Array.from(group.querySelectorAll('.opt.selected')).map(o => o.textContent.trim()).join(', ') || '—';
+    }
+    const sel = group.querySelector('.opt.selected');
+    return sel ? sel.textContent.trim() : '—';
+  }
+
+  function getScaleValue(groupId) {
+    const group = document.getElementById(groupId);
+    const sel = group.querySelector('.scale-opt.selected');
+    return sel ? sel.textContent.trim() : '—';
+  }
+
+  function validateStep(step) {
+    let ok = true;
+    if (step === 0) {
+      ok = reqField('f-nome', 'nome') & reqField('f-idade', 'idade') & reqField('f-instagram', 'instagram');
+    }
+    if (step === 1) {
+      ok = reqField('f-fe1', 'fe1') & reqField('f-fe2', 'fe2') & reqField('f-servir', 'servir') & reqField('f-fe3', 'fe3');
+    }
+    if (step === 2) {
+      ok = reqField('f-viral', 'viral');
+    }
+    if (step === 3) {
+      ok = reqField('f-pq1', 'pq1') & reqField('f-pq2', 'pq2') & reqField('f-pq3', 'pq3');
+    }
+    return !!ok;
+  }
+
+  function reqField(fieldId, inputId) {
+    const wrap = document.getElementById(fieldId);
+    const input = document.getElementById(inputId);
+    const err = wrap.querySelector('.field-error');
+    if (!input.value.trim()) {
+      wrap.classList.add('has-error');
+      err.style.display = 'block';
+      return false;
+    } else {
+      wrap.classList.remove('has-error');
+      err.style.display = 'none';
+      return true;
+    }
+  }
+
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    document.getElementById('step' + from).classList.remove('active');
+    currentStep = from + 1;
+    const next = document.getElementById('step' + currentStep);
+    next.classList.add('active');
+    next.classList.remove('step-anim');
+    void next.offsetWidth;
+    next.classList.add('step-anim');
+    updateProgress(currentStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function prevStep(from) {
+    document.getElementById('step' + from).classList.remove('active');
+    currentStep = from - 1;
+    const prev = document.getElementById('step' + currentStep);
+    prev.classList.add('active');
+    prev.classList.remove('step-anim');
+    void prev.offsetWidth;
+    prev.classList.add('step-anim');
+    updateProgress(currentStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function submitForm() {
+    if (!validateStep(3)) return;
+
+    const data = {
+      // Etapa 1
+      nome: document.getElementById('nome').value.trim(),
+      idade: document.getElementById('idade').value.trim(),
+      instagram: document.getElementById('instagram').value.trim(),
+      tempoGet: getOptValue('tempo-get', 'radio'),
+      // Etapa 2
+      relacaoJesus: document.getElementById('fe1').value.trim(),
+      momentoDeus: document.getElementById('fe2').value.trim(),
+      estadoFe: getOptValue('estado-fe', 'radio'),
+      servirDeus: document.getElementById('servir').value.trim(),
+      missionarioDigital: document.getElementById('fe3').value.trim(),
+      ministerio: getOptValue('serve', 'radio'),
+      // Etapa 3
+      redes: getOptValue('redes', 'check'),
+      editouVideo: getOptValue('editou', 'radio'),
+      criatividade: getScaleValue('criatividade'),
+      tempoSemana: getOptValue('tempo-semana', 'radio'),
+      viralGet: document.getElementById('viral').value.trim(),
+      // Etapa 4
+      porqueQuer: document.getElementById('pq1').value.trim(),
+      impactoClip: document.getElementById('pq2').value.trim(),
+      alguemProximo: getOptValue('alguem', 'radio'),
+      diferencialPessoal: document.getElementById('pq3').value.trim(),
+      comprometimento: getOptValue('comprometimento', 'radio'),
+      mensagemFinal: document.getElementById('mensagem-final').value.trim(),
+    };
+
+    // desabilita botão durante envio
+    const btnSubmit = document.querySelector('#step3 .btn-next');
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'Enviando...';
+
+    try {
+      const response = await fetch('https://formspree.io/f/xzdoykyz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          '01_Nome':                  data.nome,
+          '02_Idade':                 data.idade,
+          '03_Instagram':             data.instagram,
+          '04_Tempo_na_Get':          data.tempoGet,
+          '05_Relacao_com_Jesus':     data.relacaoJesus,
+          '06_Momento_com_Deus':      data.momentoDeus,
+          '07_Estado_da_fe':          data.estadoFe,
+          '08_Servir_a_Deus':         data.servirDeus,
+          '09_Missionario_digital':   data.missionarioDigital,
+          '10_Ministerio_atual':      data.ministerio,
+          '11_Redes_sociais':         data.redes,
+          '12_Edicao_de_video':       data.editouVideo,
+          '13_Criatividade_1a5':      data.criatividade,
+          '14_Disponibilidade':       data.tempoSemana,
+          '15_Viu_Get_viralizar':     data.viralGet,
+          '16_Por_que_quer_ser':      data.porqueQuer,
+          '17_Impacto_do_clip':       data.impactoClip,
+          '18_Alguem_proximo':        data.alguemProximo,
+          '19_Diferencial_pessoal':   data.diferencialPessoal,
+          '20_Comprometimento':       data.comprometimento,
+          '21_Mensagem_final':        data.mensagemFinal || '—',
+        })
+      });
+
+      if (!response.ok) throw new Error('Erro no envio');
+
+    } catch (err) {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = '✦ Enviar Alistamento';
+      alert('Ocorreu um erro ao enviar. Verifique sua conexão e tente novamente.');
+      return;
+    }
+
+    // esconde steps, mostra resultado
+    document.getElementById('progressWrap').style.display = 'none';
+    for (let i = 0; i < totalSteps; i++) {
+      const s = document.getElementById('step' + i);
+      if (s) s.style.display = 'none';
+    }
+
+    renderResult(data);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderResult(d) {
+    const sections = [
+      {
+        label: '01 · Identificação',
+        rows: [
+          ['Nome', d.nome],
+          ['Idade', d.idade + ' anos'],
+          ['Instagram', d.instagram],
+          ['Tempo na Get', d.tempoGet],
+        ]
+      },
+      {
+        label: '02 · Fé & Chamado',
+        rows: [
+          ['Relação com Jesus', d.relacaoJesus],
+          ['Momento com Deus', d.momentoDeus],
+          ['Estado da fé', d.estadoFe],
+          ['Servir a Deus significa', d.servirDeus],
+          ['Missionário digital significa', d.missionarioDigital],
+          ['Ministério', d.ministerio],
+        ]
+      },
+      {
+        label: '03 · O Digital',
+        rows: [
+          ['Redes sociais', d.redes],
+          ['Experiência com edição', d.editouVideo],
+          ['Criatividade (1-5)', d.criatividade],
+          ['Disponibilidade semanal', d.tempoSemana],
+          ['Viu algo da Get viralizar', d.viralGet],
+        ]
+      },
+      {
+        label: '04 · Por que eu',
+        rows: [
+          ['Por que quer ser Missionário', d.porqueQuer],
+          ['O que quer que a pessoa sinta', d.impactoClip],
+          ['Alguém próximo sem Jesus', d.alguemProximo],
+          ['Diferencial pessoal', d.diferencialPessoal],
+          ['Comprometimento', d.comprometimento],
+          d.mensagemFinal ? ['Mensagem final', d.mensagemFinal] : null,
+        ].filter(Boolean)
+      }
+    ];
+
+    let html = '';
+    sections.forEach(sec => {
+      html += `<div class="result-card"><div class="result-card-label">${sec.label}</div>`;
+      sec.rows.forEach(([q, a]) => {
+        html += `<div class="result-row"><div class="result-q">${q}</div><div class="result-a">${a || '—'}</div></div>`;
+      });
+      html += `</div>`;
+    });
+
+    document.getElementById('resultado-conteudo').innerHTML = html;
+    document.getElementById('resultado').classList.add('active');
+
+    // guarda para copiar
+    window._resultData = d;
+  }
+
+  function copyResult() {
+    const d = window._resultData;
+    const txt = `
+ALISTAMENTO — MISSÃO VIRALGET
+Get Church Floripa
+${'─'.repeat(40)}
+
+IDENTIFICAÇÃO
+Nome: ${d.nome}
+Idade: ${d.idade}
+Instagram: ${d.instagram}
+Tempo na Get: ${d.tempoGet}
+
+FÉ & CHAMADO
+Relação com Jesus: ${d.relacaoJesus}
+Momento com Deus: ${d.momentoDeus}
+Estado da fé: ${d.estadoFe}
+Servir a Deus significa: ${d.servirDeus}
+Missionário digital significa: ${d.missionarioDigital}
+Ministério atual: ${d.ministerio}
+
+O DIGITAL
+Redes sociais: ${d.redes}
+Experiência com edição: ${d.editouVideo}
+Criatividade (1-5): ${d.criatividade}
+Disponibilidade semanal: ${d.tempoSemana}
+Viu algo da Get viralizar: ${d.viralGet}
+
+POR QUE EU
+Por que quer ser Missionário: ${d.porqueQuer}
+O que quer que a pessoa sinta: ${d.impactoClip}
+Alguém próximo sem Jesus: ${d.alguemProximo}
+Diferencial pessoal: ${d.diferencialPessoal}
+Comprometimento: ${d.comprometimento}
+${d.mensagemFinal ? 'Mensagem final: ' + d.mensagemFinal : ''}
+${'─'.repeat(40)}
+`.trim();
+
+    navigator.clipboard.writeText(txt).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✓ Copiado com sucesso';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copiar respostas para análise';
+        btn.classList.remove('copied');
+      }, 2500);
+    });
+  }
+
+  function novoAlistamento() {
+    location.reload();
+  }
+</script>
+</body>
+</html>
